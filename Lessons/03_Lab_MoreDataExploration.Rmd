@@ -93,25 +93,37 @@ Question: In the R chunk below, write "dataframe1$". Press `tab` after you type 
 Find a ten-day forecast of temperatures (Fahrenheit) for Durham, North Carolina. Create two vectors, one representing the high temperature on each of the ten days and one representing the low.
 
 ```{r}
-
+Durham_high_F <- c(51,59,48,47,44,39,36,37,36,49)
+Durham_low_F <- c(38,38,40,34,29,28,19,23,29,30)
 ```
 
 Now, create two additional vectors that include the ten-day forecast for the high and low temperatures in Celsius. Use a function to create the two new vectors from your existing ones in Fahrenheit.
 
 ```{r}
-
+Far_to_Cel <- function(x) {
+  (x - 32)*5/9
+}
+Durham_high_C <-Far_to_Cel(Durham_high_F)
+Durham_high_C
+Durham_low_C <-Far_to_Cel(Durham_low_F)
+Durham_low_C
 ```
 
 Combine your four vectors into a data frame and add informative column names.
 
 ```{r}
-
+Durham_10day_Temps <- data.frame(Durham_high_F,Durham_low_F,Durham_high_C,Durham_low_C)
+colnames(Durham_10day_Temps)<-c("10-day High Temp F","10-day Low Temp F","10-day High Temp C","10-day Low Temp C")
 ```
 
 Use the common functions `summary` and `sd` to obtain basic data summaries of the ten-day forecast. How would you call these functions differently for the entire data frame vs. a single column? Attempt to demonstrate both options below.
 
 ```{r}
-
+summary(Durham_10day_Temps)
+sd(Durham_10day_Temps$`10-day High Temp F`)
+sd(Durham_10day_Temps$`10-day Low Temp F`)
+sd(Durham_10day_Temps$`10-day High Temp C`)
+sd(Durham_10day_Temps$`10-day Low Temp C`)
 ```
 
 ### Date objects
@@ -133,10 +145,11 @@ Remember formatting of dates in R:
 # An example is provided to get you started.
 # (code must be uncommented)
 today <- Sys.Date()
+today
 format(today, format = "%B")
-#format(today, format = "")
-#format(today, format = "")
-#format(today, format = "")
+format(today, format = "%A")
+format(today, format = "%Y")
+format(today, format = "%d")
 
 ```
 
@@ -153,15 +166,16 @@ library(lubridate)
 
 #Ex1
 str_today <- "2021-feb-3"
+str_today
 #Since the format is year-month-day we will use function ymd()
 date_obj_today <- ymd(str_today)
 date_obj_today
 
 #Ex2
 str_today <- "21-feb-3"
-#Sine the format is year-month-day we will use function ymd()
+#Since the format is year-month-day we will use function ymd()
 date_obj_today <- ymd(str_today)
-date_obj_today
+class(date_obj_today)
 
 #there are other similar functions ydm(), mdy(), etc
 ```
@@ -190,7 +204,7 @@ str_past <- "55-feb-3"
 date_obj_past <- fast_strptime(str_past,"%y-%b-%d",cutoff_2000=21L)
 date_obj_past
 
-#Alternative 2
+#Alternative 2 (EASIEST)
 date_obj_past2 <- parse_date_time2(str_past,"ymd",cutoff_2000=21L)
 date_obj_past2
 
