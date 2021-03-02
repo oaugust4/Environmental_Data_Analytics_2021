@@ -66,7 +66,8 @@ Are Ozone levels below the threshold for "good" AQI index (0-50)?
 
 > Exercise 1: State the hypotheses for testing mean of AQI index.
 
-> Answer: 
+> Answer: The null hypothesis is that mean of the group is is > 50.
+The alternative hypothesis is that the mean is < 50.
 
 
 ```{r}
@@ -163,11 +164,15 @@ For the NTL-LTER dataset, can we predict PM2.5 from Ozone?
 
 #Exercise 3: Run a linear regression PM2.5 by Ozone. Find the p-value and R-squared value. 
 
-
+PM25_Ozone.regression <- lm(data = EPAair, Ozone ~ PM2.5) 
+  #geom_smooth(method = lm, se=FALSE, formula=y~x, color = "black")
+summary(PM25_Ozone.regression)
 
 #Exercise 4: Build a scatterplot. Add a line and standard error for the linear regression. Add the regression equation to the plot
-
-
+EPAair.scatter <- ggplot(EPAair, aes(x = PM2.5, y = Ozone))+
+  geom_point()+
+  geom_smooth(method = "lm")
+print(EPAair.scatter)
 
 ```
 
@@ -179,17 +184,23 @@ What other variables can we add to improve model?
 ```{r}
 
 #Exercise 5: Build correlation plots and identify more possible explanatory variables to add to the regression.
-
-
-
+library(corrplot)
+EPAair.corrplot <-
+  EPAair %>% 
+  select(SITE_LATITUDE:PM2.5)%>% 
+  na.omit()
+cor_inclas <- cor(EPAair.corrplot)
+corrplot(cor_inclas,method = "ellipse")
 
 #Exercise 6: Choose a model by AIC in a Stepwise Algorithm. Do the results from AIC match the variables you selected on Exercise 5?
-
+EPAair.AIC <- lm(data = EPAair.corrplot, PM2.5 ~ SITE_LATITUDE+SITE_LONGITUDE+Month+Year+Ozone)
+step(EPAair.AIC)
 
 
 
 #Exercise 7: Run another regression using the variables selected on Exercise 6. Compare r-squared value withthe one from Exercise 5. 
-
+EPAair.AIC.2 <- lm(data = EPAair.corrplot, PM2.5 ~ SITE_LONGITUDE+Month+SITE_LATITUDE+Ozone)
+summary(EPAair.AIC.2)
 ```
 
 
