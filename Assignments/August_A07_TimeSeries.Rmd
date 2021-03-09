@@ -31,6 +31,7 @@ The completed exercise is due on Tuesday, March 16 at 11:59 pm.
 
 ```{r, message = FALSE}
 #1
+getwd()
 library(tidyverse)
 library(lubridate)
 library(trend)
@@ -55,6 +56,7 @@ EPAair_O3_2017 <- read.csv("./Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2017
 EPAair_O3_2018 <- read.csv("./Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2018_raw.csv", stringsAsFactors = TRUE)
 EPAair_O3_2019 <- read.csv("./Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2019_raw.csv", stringsAsFactors = TRUE)
 
+#combine 10 datasets
 GaringerOzone <- rbind(EPAair_O3_2010,EPAair_O3_2011,EPAair_O3_2012,EPAair_O3_2013,EPAair_O3_2014,EPAair_O3_2015,EPAair_O3_2016,EPAair_O3_2017,EPAair_O3_2018,EPAair_O3_2019)
 
 ```
@@ -127,8 +129,6 @@ GaringerOzone.monthly$NewDate <- as.Date(paste(as.numeric(GaringerOzone.monthly$
 
 GaringerOzone.monthly <- select(GaringerOzone.monthly,NewDate,Monthly.Max.8.hour.Ozone.Concentration) %>% 
   subset(select = -c(Month))
-  
-
 
   
 ```
@@ -171,7 +171,7 @@ summary(GaringerOzone.monthly_trend)
 
 ```
 
-> Answer: The seasonal Mann-Kendall is the most appropriate trend analysis because it accounts for seasonality in Ozone which based on the plot of the time series there appears to be strong seasonality in the data.
+> Answer: The seasonal Mann-Kendall is the most appropriate trend analysis because it accounts for seasonality in Ozone which based on the plot of the time series there appears to be strong seasonal component to the data.
 
 13. Create a plot depicting mean monthly ozone concentrations over time, with both a geom_point and a geom_line layer. Edit your axis labels accordingly.
 
@@ -190,7 +190,7 @@ print(GaringerOzone.monthly.plot)
 
 14. To accompany your graph, summarize your results in context of the research question. Include output from the statistical test in parentheses at the end of your sentence. Feel free to use multiple sentences in your interpretation.
 
-> Answer: Based on the graph of mean monthly ozone concentrations over a 10 year period we cannot discern a clear trend in Ozone concentration over this time period. The data is significantly affected by seasonality with peaks and troughs in the data over each year. Additionally, a monotonic trend analysis was conducted using Mann-Kendall to account for the seasonality in the date. The trend analysis found the there was not a statistically significant trend in the data. We know this becasue from our statistical test we got a pvalue that was not statistically significant, < 0.05, of (0.16323).
+> Answer: Based on the graph of mean monthly ozone concentrations over a 10 year period we cannot discern a clear trend in Ozone concentration over this time period. However, the smoothed trendline appears to be indicating a slight decrease in the data over time. The graph shows that the data is significantly affected by seasonality with peaks in the summer and troughs in the winter of each year. Additionally, a monotonic trend analysis was conducted using Mann-Kendall to account for the seasonality in the data. The trend analysis found the there was not a statistically significant trend in the data. We know this because from our statistical test we got a pvalue that was not statistically significant, < 0.05, of (0.16323).
 
 15. Subtract the seasonal component from the `GaringerOzone.monthly.ts`. Hint: Look at how we extracted the series components for the EnoDischarge on the lesson Rmd file.
 
