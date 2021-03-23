@@ -103,19 +103,19 @@ mapView(counties_sf, zcol = "AWATER")
 
 ```{r read HUCs shapefile}
 #Read the shapefile into an sf dataframe named "huc8_sf"
-
+huc8_sf<- st_read('./Data/Spatial/NCHUC8.shp') 
 
 #Reveal the columns
-
+colnames(huc8_sf)
 
 #Check the CRS
-
+st_crs(huc8_sf)
 
 #Examine some records
-
+head(huc8_sf)
 
 #View the data as a map, colored by the acreage in each
-
+mapview(huc8_sf, zcol="ACRES")
 
 ```
 
@@ -125,11 +125,13 @@ mapView(counties_sf, zcol = "AWATER")
 
 ```{r Select the Upper Neuse HUC 8}
 #Read the shapefile into an sf dataframe
-
+HUC8_UN_sf <- st_read('./Data/Spatial/NCHUC8.shp') %>% 
+  filter(SUBBASIN == 'Upper Neuse')
 
 
 #Create a map
 
+mapview(huc8_sf, col.regions='orange')+mapview(HUC8_UN_sf)
 
 ```
 
@@ -225,17 +227,21 @@ ggplot() +
 
 ```{r}
 #Compute HUC8 wind energy
-
+wind_energy_huc8 <- read.csv('https://raw.githubusercontent.com/ENV859/EnviroAtlasData/main/Wind_Energy.csv', colClasses = c('HUC_12' = 'factor')) %>% 
+  mutate(HUC_8 = substr(HUC_12,1,8)) %>% 
+  group_by(HUC_8) %>% 
+  summarize(kWhkm2day = sum(kWhkm2day))
 
 
 
 #Join to HUC_8 features
 
-
+huc8_sf_wind <- huc8_sf %>% 
+  left_join(wind_energy_huc8, by = c('HUC_8'='HUC_8'))
 
 
 #View the outputs
-
+mapview(huc8_sf_wind,zcol='kWhkm2day')
 
 
 ```
@@ -260,13 +266,16 @@ mapview(state_sf)
 
 ```{r Aggregate the HUC data on an attribute, saving as huc2_sf}
 #List the unique values in the DWQ_Basin field
-
+head(huc8_sf)
+huc2_sf <- huc8_sf %>% 
+  group_by(DWQ_Basin) %>% 
+  summarize(ACRES = sum(ACRES),SQ_MILES = sum(SQ_MILES))
 
 
 
 #Summarize on DWQ Basin value
 
-
+mapview(huc2_sf)
 
 
   
@@ -311,6 +320,7 @@ In the exercise below, we'll subset one of the HUCs (Upper Neuese), and explore 
 
 ```{r spatial.overlap.exercises}
 #Clip the HUC2 data set by the NC State boundary dataset
+head(huc2_utm)
 neuse_sf <- huc2_utm %>% 
   filter(DWQ_Basin == "Neuse")
 
@@ -350,18 +360,19 @@ mapview(neuse_counties_sf, zcol='Area_m2')
 
 ```{r EXERCISE: Clipping}
 #Select the Triangle County from the 
-
-
-
+the_triangle <- counties_sf_utm %>% 
+  filter(NAME %in% c("Chatam", "Durham", "Orange","Wake"))
   
 #Grab the intersecting HUC_8s
+the_hucs <- huc8_sf_utm[the_triangle,]
 
-
+mapview(the_hucs)+mapview(the_triangle, alpha.regions = 0, color = 'red')
 
 #Intersect the HUC_8s
+the_huc_clip <- huc2_utm %>% 
+  st_intersection(the_triangle)
 
-
-
+mapview(the_huc_clip)+mapview(the_triangle, alpha.regions = 0, color = 'red')
 
 ```
 

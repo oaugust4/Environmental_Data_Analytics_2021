@@ -34,6 +34,9 @@ The packages we'll need for this lesson are below. Install as necessary and ensu
 #Import the tidyverse library 
 library(tidyverse, quietly = TRUE)
 
+#install.packages("sf")
+#install.packages("leaflet")
+#install.packages("mapview")
 library(sf)
 library(leaflet)
 library(mapview)
@@ -239,6 +242,7 @@ mapview(sf_EPAair_PM_avg)
 mapview(sf_EPAair_PM_avg, 
         zcol='meanPM', 
         cex='maxPM')
+# cex = size
 
 #Plot with leaflet using markers
 leaflet(sf_EPAair_PM_avg) %>% 
